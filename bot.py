@@ -27,6 +27,7 @@ async def cmd_ban(message: types.Message):
     # await message.reply_to_message.reply('User has been banned')
     await message.reply_to_message.reply('My blade is ready to be unleashed.')
 
+
 @dp.message_handler(content_types=['new_chat_members'])
 async def on_user_joined(message: types.Message):
     await message.delete()
@@ -36,6 +37,7 @@ async def on_user_joined(message: types.Message):
 async def filter_messages(message: types.Message):
     if 'bad word' in message.text:
         await message.delete()
+
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
