@@ -28,6 +28,18 @@ async def cmd_ban(message: types.Message):
     await message.reply_to_message.reply('My blade is ready to be unleashed.')
 
 
+@dp.message_handler(is_admin=True, commands=['kick'], commands_prefix='!/')
+async def cmd_ban(message: types.Message):
+    if not message.reply_to_message:
+        await message.reply('This command need to be as reply on message')
+        return
+    await bot.delete_message(config.GROUP_ID, message.message_id)
+    await message.bot.ban_chat_member(chat_id=config.GROUP_ID, user_id=message.reply_to_message.from_user.id)
+
+    await message.reply_to_message.reply('User has been kicked')
+    # await message.reply_to_message.reply('My blade is ready to be unleashed.')
+
+
 @dp.message_handler(content_types=['new_chat_members'])
 async def on_user_joined(message: types.Message):
     await message.delete()
