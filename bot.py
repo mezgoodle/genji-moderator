@@ -3,22 +3,35 @@ import logging
 import datetime
 
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.dispatcher.filters.state import StatesGroup, State
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher import FSMContext
 
 from filters import IsAdminFilter
+
+
+class BanState(StatesGroup):
+    """
+    State class that represents ban proccess
+    """
+    Time = State()
+    AdminID = State()
+
 
 # log level
 logging.basicConfig(level=logging.INFO)
 
 # bot init
 bot = Bot(token=config.TOKEN)
-dp = Dispatcher(bot)
+storage = MemoryStorage()
+dp = Dispatcher(bot, storage=storage)
 
 # activate filters
 dp.filters_factory.bind(IsAdminFilter)
 
 
-@dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/')
-async def cmd_ban(message: types.Message):
+@dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/', state='*')
+async def cmd_ban(message: types.Message, state: FSMContext):
     if not message.reply_to_message:
         await message.reply('This command need to be as reply on message')
         return
@@ -26,7 +39,20 @@ async def cmd_ban(message: types.Message):
     # await message.bot.kick_chat_member(chat_id=config.GROUP_ID, user_id=message.reply_to_message.from_user.id)
 
     # await message.reply_to_message.reply('User has been banned')
-    await message.reply_to_message.reply('My blade is ready to be unleashed.')
+    await state.update_data({'AdminID': message.from_user.id})
+    await BanState.Time.set()
+    await message.reply_to_message.reply('Write the time in days to ban this user.')
+
+
+@dp.message_handler(state=BanState.Time)
+async def finish_ban(message: types.Message, state: FSMContext) -> types.Message:
+    # TODO: verify message as days number
+    data = await state.get_data()
+    if message.from_user.id == data['AdminID']:
+        # ban user
+        await state.finish()
+        return await message.answer('User has been banned')
+    return await message.answer('It needs to be the administrator')
 
 
 @dp.message_handler(is_admin=True, commands=['kick'], commands_prefix='!/')
