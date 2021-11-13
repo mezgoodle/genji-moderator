@@ -46,7 +46,11 @@ async def cmd_ban(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=BanState.Time)
 async def finish_ban(message: types.Message, state: FSMContext) -> types.Message:
-    # TODO: verify message as days number
+    text = message.text
+    if text.isdigit():
+        text = int(text)
+    else:
+        return await message.answer('It should be an integer')
     data = await state.get_data()
     if message.from_user.id == data['AdminID']:
         # ban user
@@ -67,17 +71,17 @@ async def cmd_ban(message: types.Message):
     # await message.reply_to_message.reply('My blade is ready to be unleashed.')
 
 
-@dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/')
-async def cmd_ban(message: types.Message):
-    if not message.reply_to_message:
-        await message.reply('This command need to be as reply on message')
-        return
-    await bot.delete_message(config.GROUP_ID, message.message_id)
-    await message.bot.ban_chat_member(chat_id=config.GROUP_ID, user_id=message.reply_to_message.from_user.id,
-                                      until_date=datetime.timedelta(days=367))
-
-    await message.reply_to_message.reply('User has been banned')
-    # await message.reply_to_message.reply('My blade is ready to be unleashed.')
+# @dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/')
+# async def cmd_ban(message: types.Message):
+#     if not message.reply_to_message:
+#         await message.reply('This command need to be as reply on message')
+#         return
+#     await bot.delete_message(config.GROUP_ID, message.message_id)
+#     await message.bot.ban_chat_member(chat_id=config.GROUP_ID, user_id=message.reply_to_message.from_user.id,
+#                                       until_date=datetime.timedelta(days=367))
+#
+#     await message.reply_to_message.reply('User has been banned')
+#     # await message.reply_to_message.reply('My blade is ready to be unleashed.')
 
 
 @dp.message_handler(content_types=['new_chat_members'])
