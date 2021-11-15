@@ -71,17 +71,12 @@ async def cmd_ban(message: types.Message):
     # await message.reply_to_message.reply('My blade is ready to be unleashed.')
 
 
-# @dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/')
-# async def cmd_ban(message: types.Message):
-#     if not message.reply_to_message:
-#         await message.reply('This command need to be as reply on message')
-#         return
-#     await bot.delete_message(config.GROUP_ID, message.message_id)
-#     await message.bot.ban_chat_member(chat_id=config.GROUP_ID, user_id=message.reply_to_message.from_user.id,
-#                                       until_date=datetime.timedelta(days=367))
-#
-#     await message.reply_to_message.reply('User has been banned')
-#     # await message.reply_to_message.reply('My blade is ready to be unleashed.')
+@dp.message_handler(commands=['dice'])
+async def role_dice(message: types.Message) -> types.Message:
+    """
+    This handler will be called when user sends `/issues` command
+    """
+    return await message.answer_dice()
 
 
 @dp.message_handler(content_types=['new_chat_members'])
