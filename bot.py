@@ -1,6 +1,6 @@
 import config
 import logging
-import datetime
+from datetime import timedelta
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters.state import StatesGroup, State
@@ -12,7 +12,7 @@ from filters import IsAdminFilter
 
 class BanState(StatesGroup):
     """
-    State class that represents ban proccess
+    State class that represents ban process
     """
     Time = State()
     AdminID = State()
@@ -31,7 +31,7 @@ dp.filters_factory.bind(IsAdminFilter)
 
 
 @dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/', state='*')
-async def cmd_ban(message: types.Message, state: FSMContext):
+async def prepare_ban(message: types.Message, state: FSMContext):
     if not message.reply_to_message:
         await message.reply('This command need to be as reply on message')
         return
@@ -60,21 +60,20 @@ async def finish_ban(message: types.Message, state: FSMContext) -> types.Message
 
 
 @dp.message_handler(is_admin=True, commands=['kick'], commands_prefix='!/')
-async def cmd_ban(message: types.Message):
+async def kick_user(message: types.Message):
     if not message.reply_to_message:
-        await message.reply('This command need to be as reply on message')
-        return
-    await bot.delete_message(config.GROUP_ID, message.message_id)
-    await message.bot.ban_chat_member(chat_id=config.GROUP_ID, user_id=message.reply_to_message.from_user.id)
+        return await message.reply('This command need to be as reply on message')
+    await bot.delete_message(message.chat.id, message.message_id)
+    await bot.kick_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
+                               until_date=timedelta(seconds=32))
+    return await message.reply_to_message.reply('User has been kicked for the 32 seconds')
 
-    await message.reply_to_message.reply('User has been kicked')
-    # await message.reply_to_message.reply('My blade is ready to be unleashed.')
 
 
 @dp.message_handler(commands=['dice'])
 async def role_dice(message: types.Message) -> types.Message:
     """
-    This handler will be called when user sends `/issues` command
+    This handler will be called when user sends `/dice` command
     """
     return await message.answer_dice()
 
