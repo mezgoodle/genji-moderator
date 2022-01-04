@@ -69,6 +69,19 @@ async def kick_user(message: types.Message):
     return await message.reply_to_message.reply('User has been kicked for the 32 seconds')
 
 
+@dp.message_handler(is_admin=True, commands=['mute'], commands_prefix='!/')
+async def mute_user(message: types.Message):
+    if not message.reply_to_message:
+        return await message.reply('This command need to be as reply on message')
+    await bot.delete_message(message.chat.id, message.message_id)
+    await bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
+                                   until_date=timedelta(seconds=32),
+                                   permissions=types.chat_permissions.ChatPermissions(can_send_messages=False,
+                                                                                      can_send_polls=False,
+                                                                                      can_send_other_messages=False,
+                                                                                      can_send_media_messages=False))
+    return await message.reply_to_message.reply('User has been muted for the 32 seconds')
+
 
 @dp.message_handler(commands=['dice'])
 async def role_dice(message: types.Message) -> types.Message:
