@@ -1,23 +1,12 @@
-import config
 import logging
 from datetime import timedelta
 
 from aiogram import Bot, Dispatcher, executor, types
-from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher import FSMContext
 
+import config
+from database import create_database, get_engine, get_user, update_user, create_user
 from filters import IsAdminFilter
-from database import create_database, get_engine, get_user, update_user, create_user, User
-
-
-class BanState(StatesGroup):
-    """
-    State class that represents ban process
-    """
-    Time = State()
-    AdminID = State()
-
 
 # log level
 logging.basicConfig(level=logging.INFO)
@@ -46,33 +35,16 @@ async def work_with_user(user_id: str, field_name: str) -> int:
     return seconds
 
 
-@dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/', state='*')
-async def prepare_ban(message: types.Message, state: FSMContext):
+@dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/')
+async def ban_user(message: types.Message):
     if not message.reply_to_message:
         await message.reply('This command need to be as reply on message')
         return
-    # await message.bot.delete_message(config.GROUP_ID, message.message_id)
-    # await message.bot.kick_chat_member(chat_id=config.GROUP_ID, user_id=message.reply_to_message.from_user.id)
+    await bot.delete_message(message.chat.id, message.message_id)
 
-    # await message.reply_to_message.reply('User has been banned')
-    await state.update_data({'AdminID': message.from_user.id})
-    await BanState.Time.set()
-    await message.reply_to_message.reply('Write the time in days to ban this user.')
-
-
-@dp.message_handler(state=BanState.Time)
-async def finish_ban(message: types.Message, state: FSMContext) -> types.Message:
-    text = message.text
-    if text.isdigit():
-        text = int(text)
-    else:
-        return await message.answer('It should be an integer')
-    data = await state.get_data()
-    if message.from_user.id == data['AdminID']:
-        # ban user
-        await state.finish()
-        return await message.answer('User has been banned')
-    return await message.answer('It needs to be the administrator')
+    await bot.kick_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
+                               until_date=timedelta(seconds=31))
+    return await message.answer('User has been banned')
 
 
 @dp.message_handler(is_admin=True, commands=['kick'], commands_prefix='!/')
