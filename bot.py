@@ -1,3 +1,4 @@
+# TODO: make logging in database operation, reformat and debug code, tests, write warnings, 3 warns == 1 ban, commit db as file: https://docs.github.com/en/rest/reference/repos#create-or-update-file-contents
 import logging
 from datetime import timedelta
 
