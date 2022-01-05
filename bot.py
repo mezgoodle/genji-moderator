@@ -80,9 +80,13 @@ async def kick_user(message: types.Message):
     if not message.reply_to_message:
         return await message.reply('This command need to be as reply on message')
     await bot.delete_message(message.chat.id, message.message_id)
+
+    user_id = message.reply_to_message.from_user.id
+    seconds = await work_with_user(user_id, 'kicks')
+
     await bot.kick_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
-                               until_date=timedelta(seconds=32))
-    return await message.reply_to_message.reply('User has been kicked for the 32 seconds')
+                               until_date=timedelta(seconds=seconds))
+    return await message.reply_to_message.reply(f'User has been kicked for the {seconds} seconds')
 
 
 @dp.message_handler(is_admin=True, commands=['mute'], commands_prefix='!/')
