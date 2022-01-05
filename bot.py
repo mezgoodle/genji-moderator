@@ -6,10 +6,9 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
-from sqlmodel import create_engine
 
 from filters import IsAdminFilter
-from database import create_database
+from database import create_database, get_engine
 
 
 class BanState(StatesGroup):
@@ -110,6 +109,6 @@ async def filter_messages(message: types.Message):
 if __name__ == '__main__':
     sqlite_file_name = 'database.db'
     sqlite_url = f'sqlite:///{sqlite_file_name}'
-    engine = create_engine(sqlite_url, echo=True)
+    engine = get_engine(sqlite_url)
     create_database(engine)
     executor.start_polling(dp, skip_updates=True)
