@@ -42,8 +42,8 @@ async def ban_user(message: types.Message):
         return
     await bot.delete_message(message.chat.id, message.message_id)
 
-    await bot.kick_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
-                               until_date=timedelta(seconds=31))
+    await bot.ban_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
+                              until_date=timedelta(seconds=31))
     return await message.answer('User has been banned')
 
 
@@ -56,8 +56,8 @@ async def kick_user(message: types.Message):
     user_id = message.reply_to_message.from_user.id
     seconds = await work_with_user(user_id, 'kicks')
 
-    await bot.kick_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
-                               until_date=timedelta(seconds=seconds))
+    await bot.ban_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
+                              until_date=timedelta(seconds=seconds))
     return await message.reply_to_message.reply(f'User has been kicked for the {seconds} seconds')
 
 
