@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from sqlmodel import Field, SQLModel, Session, create_engine, select
 from sqlalchemy import exc
@@ -13,7 +13,7 @@ class User(SQLModel, table=True):
     mutes: Optional[int] = Field(default=0, description='Number of user\'s mutes')
 
 
-def get_user(engine: create_engine, user_id: str) -> Optional[User, None]:
+def get_user(engine: create_engine, user_id: str) -> Union[User, None]:
     with Session(engine) as session:
         try:
             user = session.exec(select(User).where(User.user_id == user_id)).one()
@@ -22,18 +22,23 @@ def get_user(engine: create_engine, user_id: str) -> Optional[User, None]:
     return user
 
 
-def create_user(engine: create_engine, data: dict):
+def create_user(engine: create_engine, data: dict) -> Union[User, None]:
     user = User(**data)
     with Session(engine) as session:
-        session.add(user)
-        session.commit()
+        try:
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+            return user
+        except exc.CompileError:
+            return None
 
 
-def update_user(engine: create_engine, user_id: str, data: dict) -> bool:
+def update_user(engine: create_engine, user_id: str, field_name: str, value: int) -> bool:
     user = get_user(engine, user_id)
     with Session(engine) as session:
         try:
-            user = User(**data)
+            setattr(user, field_name, value)
             session.add(user)
             session.commit()
         except exc.CompileError:
@@ -57,4 +62,4 @@ def create_database(engine: create_engine) -> None:
 
 
 def get_engine(path: str) -> create_engine:
-    return create_engine(path, echo=True)
+    return create_engine(path, echo=False)

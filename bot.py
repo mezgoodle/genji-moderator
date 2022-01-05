@@ -8,7 +8,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import FSMContext
 
 from filters import IsAdminFilter
-from database import create_database, get_engine
+from database import create_database, get_engine, get_user, update_user, create_user, User
 
 
 class BanState(StatesGroup):
@@ -32,6 +32,18 @@ dp.filters_factory.bind(IsAdminFilter)
 
 # SQLModel engine
 engine: object
+
+
+async def work_with_user(user_id: str, field_name: str) -> int:
+    seconds: int
+    user = get_user(engine, user_id)
+    if user:
+        update_user(engine, user_id, field_name, getattr(user, field_name) + 1)
+        seconds = (getattr(user, field_name) + 1) * 32
+    else:
+        user = create_user(engine, {'user_id': user_id, field_name: 1})
+        seconds = getattr(user, field_name) * 32
+    return seconds
 
 
 @dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/', state='*')
@@ -78,13 +90,17 @@ async def mute_user(message: types.Message):
     if not message.reply_to_message:
         return await message.reply('This command need to be as reply on message')
     await bot.delete_message(message.chat.id, message.message_id)
+
+    user_id = message.reply_to_message.from_user.id
+    seconds = await work_with_user(user_id, 'mutes')
+
     await bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
-                                   until_date=timedelta(seconds=32),
+                                   until_date=timedelta(seconds=seconds),
                                    permissions=types.chat_permissions.ChatPermissions(can_send_messages=False,
                                                                                       can_send_polls=False,
                                                                                       can_send_other_messages=False,
                                                                                       can_send_media_messages=False))
-    return await message.reply_to_message.reply('User has been muted for the 32 seconds')
+    return await message.reply_to_message.reply(f'User has been muted for the {seconds} seconds')
 
 
 @dp.message_handler(commands=['dice'])
