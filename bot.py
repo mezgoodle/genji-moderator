@@ -1,4 +1,4 @@
-# TODO: make logging in database operation, reformat and debug code, tests, commit db as file: https://docs.github.com/en/rest/reference/repos#create-or-update-file-contents
+# TODO: reformat and debug code, tests, commit db as file: https://docs.github.com/en/rest/reference/repos#create-or-update-file-contents
 import logging
 from datetime import timedelta
 from typing import Tuple
@@ -54,7 +54,20 @@ async def ban_user(message: types.Message):
 
     await bot.ban_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
                               until_date=timedelta(seconds=29))
-    return await message.answer('User has been banned')
+    return await message.reply_to_message.reply('User has been banned')
+
+
+@dp.message_handler(is_admin=True, commands=['unban'], commands_prefix='!/')
+async def unban_user(message: types.Message):
+    if not message.reply_to_message:
+        await message.reply('This command need to be as reply on message')
+        return
+    await bot.delete_message(message.chat.id, message.message_id)
+
+    await bot.unban_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
+                                only_if_banned=True)
+    username = message.reply_to_message.from_user.username
+    return await message.reply_to_message.reply(f'User @{username} has been unbanned')
 
 
 @dp.message_handler(is_admin=True, commands=['kick'], commands_prefix='!/')
