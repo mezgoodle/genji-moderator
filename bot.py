@@ -1,6 +1,7 @@
-# TODO: make logging in database operation, reformat and debug code, tests, write warnings, 3 warns == 1 ban, commit db as file: https://docs.github.com/en/rest/reference/repos#create-or-update-file-contents
+# TODO: make logging in database operation, reformat and debug code, tests, commit db as file: https://docs.github.com/en/rest/reference/repos#create-or-update-file-contents
 import logging
 from datetime import timedelta
+from typing import Tuple
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
@@ -36,6 +37,14 @@ async def work_with_user(user_id: str, field_name: str) -> int:
     return seconds
 
 
+async def check_warns(user_id: str) -> Tuple[bool, int]:
+    user = get_user(engine, user_id)
+    warns = user.warns
+    if warns == 3:
+        return True, 0
+    return False, user.warns
+
+
 @dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/')
 async def ban_user(message: types.Message):
     if not message.reply_to_message:
@@ -44,7 +53,7 @@ async def ban_user(message: types.Message):
     await bot.delete_message(message.chat.id, message.message_id)
 
     await bot.ban_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
-                              until_date=timedelta(seconds=31))
+                              until_date=timedelta(seconds=29))
     return await message.answer('User has been banned')
 
 
@@ -60,6 +69,22 @@ async def kick_user(message: types.Message):
     await bot.ban_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
                               until_date=timedelta(seconds=seconds))
     return await message.reply_to_message.reply(f'User has been kicked for the {seconds} seconds')
+
+
+@dp.message_handler(is_admin=True, commands=['warn'], commands_prefix='!/')
+async def kick_user(message: types.Message):
+    if not message.reply_to_message:
+        return await message.reply('This command need to be as reply on message')
+    await bot.delete_message(message.chat.id, message.message_id)
+
+    user_id = message.reply_to_message.from_user.id
+    _ = await work_with_user(user_id, 'warns')
+    ban, warns = await check_warns(user_id)
+    if ban:
+        await bot.ban_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
+                                  until_date=timedelta(seconds=29))
+        return await message.reply_to_message.reply(f'User has been banned because of his three warns')
+    return await message.reply_to_message.reply(f'Now user has {warns} warn(s)')
 
 
 @dp.message_handler(is_admin=True, commands=['mute'], commands_prefix='!/')
