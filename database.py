@@ -1,4 +1,5 @@
 from typing import Optional, Union
+import logging
 
 from sqlmodel import Field, SQLModel, Session, create_engine, select
 from sqlalchemy import exc
@@ -13,45 +14,57 @@ class User(SQLModel, table=True):
 
 
 def get_user(engine: create_engine, user_id: str) -> Union[User, None]:
+    logging.info('Getting an user')
     with Session(engine) as session:
         try:
             user = session.exec(select(User).where(User.user_id == user_id)).one()
         except exc.NoResultFound:
+            logging.warning('User was not founded')
             return None
+    logging.info('User was founded')
     return user
 
 
 def create_user(engine: create_engine, data: dict) -> Union[User, None]:
+    logging.info('Creating an user')
     user = User(**data)
     with Session(engine) as session:
         try:
             session.add(user)
             session.commit()
             session.refresh(user)
-            return user
+            logging.info('User was created')
         except exc.CompileError:
+            logging.warning('User was not created')
             return None
+    return user
 
 
 def update_user(engine: create_engine, user_id: str, field_name: str, value: int) -> bool:
+    logging.info('Updating an user')
     user = get_user(engine, user_id)
     with Session(engine) as session:
         try:
             setattr(user, field_name, value)
             session.add(user)
             session.commit()
+            logging.info('User was updating')
         except exc.CompileError:
+            logging.warning('User was not updating')
             return False
     return True
 
 
 def delete_user(engine: create_engine, user_id: str) -> bool:
+    logging.info('Deleting an user')
     user = get_user(engine, user_id)
     with Session(engine) as session:
         try:
             session.delete(user)
             session.commit()
+            logging.info('User was deleting')
         except exc.CompileError:
+            logging.warning('User was not deleting')
             return False
     return True
 
