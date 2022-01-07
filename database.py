@@ -1,8 +1,11 @@
-from typing import Optional, Union
+from typing import Optional, Union, List
 import logging
+import csv
 
 from sqlmodel import Field, SQLModel, Session, create_engine, select
 from sqlalchemy import exc
+
+from github_api import fill_data, update_csv
 
 
 class User(SQLModel, table=True):
@@ -25,6 +28,18 @@ def get_user(engine: create_engine, user_id: str) -> Union[User, None]:
     return user
 
 
+def get_users(engine: create_engine) -> Union[List[User], None]:
+    logging.info('Getting users')
+    with Session(engine) as session:
+        try:
+            users = session.exec(select(User)).all()
+        except exc.NoResultFound:
+            logging.warning('Users were not founded')
+            return None
+    logging.info('Users were founded')
+    return users
+
+
 def create_user(engine: create_engine, data: dict) -> Union[User, None]:
     logging.info('Creating an user')
     user = User(**data)
@@ -37,6 +52,8 @@ def create_user(engine: create_engine, data: dict) -> Union[User, None]:
         except exc.CompileError:
             logging.warning('User was not created')
             return None
+    fill_data(engine)
+    update_csv()
     return user
 
 
@@ -52,6 +69,8 @@ def update_user(engine: create_engine, user_id: str, field_name: str, value: int
         except exc.CompileError:
             logging.warning('User was not updating')
             return False
+    fill_data(engine)
+    update_csv()
     return True
 
 
@@ -66,7 +85,19 @@ def delete_user(engine: create_engine, user_id: str) -> bool:
         except exc.CompileError:
             logging.warning('User was not deleting')
             return False
+    fill_data(engine)
+    update_csv()
     return True
+
+
+def fill_database(engine: create_engine) -> None:
+    with open('users.csv') as csv_file:
+        reader = csv.reader(csv_file, delimiter=',')
+        for row in reader:
+            user = User(user_id=row[0], warns=row[1], kicks=row[2], mutes=[3])
+            with Session(engine) as session:
+                session.add(user)
+                session.commit()
 
 
 def create_database(engine: create_engine) -> None:
