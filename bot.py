@@ -79,8 +79,7 @@ async def kick_user(message: types.Message):
     user_id = message.reply_to_message.from_user.id
     seconds = await work_with_user(user_id, 'kicks')
 
-    await bot.ban_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
-                              until_date=timedelta(seconds=seconds))
+    await bot.ban_chat_member(chat_id=message.chat.id, user_id=user_id, until_date=timedelta(seconds=seconds))
     return await message.reply_to_message.reply(f'User has been kicked for the {seconds} seconds')
 
 
@@ -94,8 +93,7 @@ async def kick_user(message: types.Message):
     _ = await work_with_user(user_id, 'warns')
     ban, warns = await check_warns(user_id)
     if ban:
-        await bot.ban_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
-                                  until_date=timedelta(seconds=29))
+        await bot.ban_chat_member(chat_id=message.chat.id, user_id=user_id, until_date=timedelta(seconds=29))
         return await message.reply_to_message.reply(f'User has been banned because of his three warns')
     return await message.reply_to_message.reply(f'Now user has {warns} warn(s)')
 
@@ -109,13 +107,29 @@ async def mute_user(message: types.Message):
     user_id = message.reply_to_message.from_user.id
     seconds = await work_with_user(user_id, 'mutes')
 
-    await bot.restrict_chat_member(chat_id=message.chat.id, user_id=message.reply_to_message.from_user.id,
+    await bot.restrict_chat_member(chat_id=message.chat.id, user_id=user_id,
                                    until_date=timedelta(seconds=seconds),
                                    permissions=types.chat_permissions.ChatPermissions(can_send_messages=False,
                                                                                       can_send_polls=False,
                                                                                       can_send_other_messages=False,
                                                                                       can_send_media_messages=False))
     return await message.reply_to_message.reply(f'User has been muted for the {seconds} seconds')
+
+
+@dp.message_handler(is_admin=True, commands=['unmute'], commands_prefix='!/')
+async def unmute_user(message: types.Message):
+    if not message.reply_to_message:
+        return await message.reply('This command need to be as reply on message')
+    await bot.delete_message(message.chat.id, message.message_id)
+
+    user_id = message.reply_to_message.from_user.id
+
+    await bot.restrict_chat_member(chat_id=message.chat.id, user_id=user_id,
+                                   permissions=types.chat_permissions.ChatPermissions(can_send_messages=True,
+                                                                                      can_send_polls=True,
+                                                                                      can_send_other_messages=True,
+                                                                                      can_send_media_messages=True))
+    return await message.reply_to_message.reply(f'User has been unmuted')
 
 
 @dp.message_handler(commands=['dice'])
