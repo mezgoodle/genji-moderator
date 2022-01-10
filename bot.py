@@ -1,4 +1,3 @@
-# TODO: reformat and debug code, tests, commit db as file: https://docs.github.com/en/rest/reference/repos#create-or-update-file-contents
 import logging
 from datetime import timedelta
 from typing import Tuple
@@ -26,6 +25,12 @@ engine: object
 
 
 async def work_with_user(user_id: str, field_name: str) -> int:
+    """
+    Get seconds for user
+    :param user_id: user's specific identifier
+    :param field_name: mute, warn or kick
+    :return: number of seconds
+    """
     seconds: int
     user = get_user(engine, user_id)
     if user:
@@ -38,6 +43,11 @@ async def work_with_user(user_id: str, field_name: str) -> int:
 
 
 async def check_warns(user_id: str) -> Tuple[bool, int]:
+    """
+    If user has 3 warns, it will be as ban
+    :param user_id: user's specific identifier
+    :return: is it a ban and number of warns
+    """
     user = get_user(engine, user_id)
     warns = user.warns
     if warns == 3:
