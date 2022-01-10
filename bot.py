@@ -7,8 +7,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 import config
-from database import create_database, get_engine, get_user, update_user, create_user, fill_database
-from github_api import fill_data, update_csv
+from database import create_database, get_engine, get_user, update_user, create_user
 from filters import IsAdminFilter
 
 # log level
@@ -158,7 +157,5 @@ if __name__ == '__main__':
     sqlite_url = f'sqlite:///{sqlite_file_name}'
     engine = get_engine(sqlite_url)
     create_database(engine)
-
-    fill_database(engine)
 
     executor.start_polling(dp, skip_updates=True)

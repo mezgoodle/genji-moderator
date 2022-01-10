@@ -1,22 +1,10 @@
-from typing import Optional, Union, List
 import logging
-import csv
+from typing import Union
 
-from sqlmodel import Field, SQLModel, Session, create_engine, select
 from sqlalchemy import exc
+from sqlmodel import SQLModel, Session, create_engine, select
 
-from github_api import fill_data, update_csv
-
-
-class User(SQLModel, table=True):
-    """
-    Model that represents User in database
-    """
-    id: Optional[int] = Field(default=None, primary_key=True)
-    user_id: Optional[str] = Field(default=None, description='User identifier in Telegram')
-    warns: Optional[int] = Field(default=0, description='Number of user\'s warnings')
-    kicks: Optional[int] = Field(default=0, description='Number of user\'s kicks')
-    mutes: Optional[int] = Field(default=0, description='Number of user\'s mutes')
+from models import User
 
 
 def get_user(engine: create_engine, user_id: str) -> Union[User, None]:
@@ -37,23 +25,6 @@ def get_user(engine: create_engine, user_id: str) -> Union[User, None]:
     return user
 
 
-def get_users(engine: create_engine) -> Union[List[User], None]:
-    """
-    Function for getting all users
-    :param engine: sqlmodel's engine
-    :return: List of user instances or nothing
-    """
-    logging.info('Getting users')
-    with Session(engine) as session:
-        try:
-            users = session.exec(select(User)).all()
-        except exc.NoResultFound:
-            logging.warning('Users were not founded')
-            return None
-    logging.info('Users were founded')
-    return users
-
-
 def create_user(engine: create_engine, data: dict) -> Union[User, None]:
     """
     Function for creating row in database
@@ -72,8 +43,6 @@ def create_user(engine: create_engine, data: dict) -> Union[User, None]:
         except exc.CompileError:
             logging.warning('User was not created')
             return None
-    fill_data(engine)
-    update_csv()
     return user
 
 
@@ -97,8 +66,6 @@ def update_user(engine: create_engine, user_id: str, field_name: str, value: int
         except exc.CompileError:
             logging.warning('User was not updating')
             return False
-    fill_data(engine)
-    update_csv()
     return True
 
 
@@ -119,24 +86,7 @@ def delete_user(engine: create_engine, user_id: str) -> bool:
         except exc.CompileError:
             logging.warning('User was not deleting')
             return False
-    fill_data(engine)
-    update_csv()
     return True
-
-
-def fill_database(engine: create_engine) -> None:
-    """
-    Function for filling the database with the data from csv file
-    :param engine: sqlmodel's engine
-    :return: nothing to return
-    """
-    with open('users.csv') as csv_file:
-        reader = csv.reader(csv_file, delimiter=',')
-        for row in reader:
-            user = User(user_id=row[0], warns=row[1], kicks=row[2], mutes=[3])
-            with Session(engine) as session:
-                session.add(user)
-                session.commit()
 
 
 def create_database(engine: create_engine) -> None:
