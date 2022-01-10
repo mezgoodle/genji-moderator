@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import timedelta
 from typing import Tuple
 
@@ -161,6 +162,27 @@ async def filter_messages(message: types.Message):
         await message.delete()
 
 
+# Webhook settings
+HEROKU_APP_NAME = os.getenv('HEROKU_APP_NAME')
+WEBHOOK_HOST = f'https://{HEROKU_APP_NAME}.herokuapp.com'
+WEBHOOK_PATH = f'/webhook/{config.TELEGRAM_TOKEN}'
+WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
+
+# Webserver settings
+WEBAPP_HOST = '0.0.0.0'
+WEBAPP_PORT = int(os.getenv('PORT', 5000))
+
+
+# Functions for webhooks
+async def on_startup(dp):
+    await bot.set_webhook(WEBHOOK_URL)
+
+
+async def on_shutdown(dp):
+    logging.warning('Shutting down..')
+    logging.warning('Bye!')
+
+
 if __name__ == '__main__':
 
     sqlite_file_name = 'database.db'
@@ -168,4 +190,12 @@ if __name__ == '__main__':
     engine = get_engine(sqlite_url)
     create_database(engine)
 
-    executor.start_polling(dp, skip_updates=True)
+    executor.start_webhook(
+        dispatcher=dp,
+        webhook_path=WEBHOOK_PATH,
+        on_startup=on_startup,
+        on_shutdown=on_shutdown,
+        skip_updates=True,
+        host=WEBAPP_HOST,
+        port=WEBAPP_PORT
+    )
