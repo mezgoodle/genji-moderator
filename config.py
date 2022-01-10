@@ -1,3 +1,3 @@
 import os
 
-TOKEN = os.getenv('TOKEN', 'token')
+TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN', 'token')
