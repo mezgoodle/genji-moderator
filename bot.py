@@ -15,7 +15,7 @@ from filters import IsAdminFilter
 logging.basicConfig(level=logging.INFO)
 
 # bot init
-bot = Bot(token=config.TOKEN)
+bot = Bot(token=config.TELEGRAM_TOKEN)
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
