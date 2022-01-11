@@ -134,7 +134,6 @@ async def unmute_user(message: types.Message):
     await bot.delete_message(message.chat.id, message.message_id)
 
     user_id = message.reply_to_message.from_user.id
-
     await bot.restrict_chat_member(chat_id=message.chat.id, user_id=user_id,
                                    permissions=types.chat_permissions.ChatPermissions(can_send_messages=True,
                                                                                       can_send_polls=True,
@@ -151,15 +150,49 @@ async def role_dice(message: types.Message) -> types.Message:
     return await message.answer_dice()
 
 
+@dp.message_handler(commands=['admins'])
+async def admins_command(message: types.Message) -> types.Message:
+    """
+    This handler will be called when user sends `/admins` command
+    """
+    chat_id = message.chat.id
+    members = await bot.get_chat_administrators(chat_id)
+    msg = ''
+    for member in members:
+        msg += f'@{member.user.username} '
+    return await message.answer(msg)
+
+
+@dp.message_handler(commands=['start'])
+async def start_command(message: types.Message) -> types.Message:
+    """
+    This handler will be called when user sends `/start` command
+    """
+    return await message.answer('Add a bot to the chat, give the administrator permissions and use it')
+
+
+@dp.message_handler(commands=['help'])
+async def help_command(message: types.Message) -> types.Message:
+    """
+    This handler will be called when user sends `/help` command
+    """
+    return await message.answer("""
+    User's command:
+        /help - get commands
+        /admins - get chat admins
+        /dice - roll a dice
+    Administrator's command:
+        !warn - give a user warn
+        !kick - kick a user
+        !ban - ban a user
+        !mute - mute a user
+        !unmute, !unban - opposite commands
+    """)
+
+
 @dp.message_handler(content_types=['new_chat_members'])
 async def on_user_joined(message: types.Message):
     await message.delete()
-
-
-@dp.message_handler()
-async def filter_messages(message: types.Message):
-    if 'bad word' in message.text:
-        await message.delete()
 
 
 # Webhook settings
