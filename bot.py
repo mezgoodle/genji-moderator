@@ -95,7 +95,7 @@ async def kick_user(message: types.Message):
 
 
 @dp.message_handler(is_admin=True, commands=['warn'], commands_prefix='!/')
-async def kick_user(message: types.Message):
+async def warn_user(message: types.Message):
     if not message.reply_to_message:
         return await message.reply('This command need to be as reply on message')
     await bot.delete_message(message.chat.id, message.message_id)
@@ -105,7 +105,7 @@ async def kick_user(message: types.Message):
     ban, warns = await check_warns(user_id)
     if ban:
         await bot.ban_chat_member(chat_id=message.chat.id, user_id=user_id, until_date=timedelta(seconds=29))
-        return await message.reply_to_message.reply(f'User has been banned because of his three warns')
+        return await message.reply_to_message.reply('User has been banned because of his three warns')
     return await message.reply_to_message.reply(f'Now user has {warns} warn(s)')
 
 
@@ -139,7 +139,7 @@ async def unmute_user(message: types.Message):
                                                                                       can_send_polls=True,
                                                                                       can_send_other_messages=True,
                                                                                       can_send_media_messages=True))
-    return await message.reply_to_message.reply(f'User has been unmuted')
+    return await message.reply_to_message.reply('User has been unmuted')
 
 
 @dp.message_handler(commands=['dice'])
