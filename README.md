@@ -12,7 +12,7 @@
     🌟Hello everyone! This is the repository of Telegram bot on Python "genji-moderator".🌟
 </p>
 
-![Mezidia logo](https://raw.githubusercontent.com/mezgoodle/images/master/genji.png)
+![Mezidia logo](https://raw.githubusercontent.com/mezgoodle/images/master/genji.jpg)
 
 ## Motivation :exclamation:
 
