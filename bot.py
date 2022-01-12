@@ -160,7 +160,7 @@ async def admins_command(message: types.Message) -> types.Message:
     msg = ''
     for member in members:
         msg += f'@{member.user.username} '
-    return await message.answer(msg)
+    return await message.answer(msg, disable_notification=True)
 
 
 @dp.message_handler(commands=['start'])
