@@ -22,7 +22,7 @@ pytz==2021.3
 requests==2.27.1
 six==1.16.0
 SQLAlchemy==1.4.31
-sqlalchemy2-stubs==0.0.2a19
+sqlalchemy2-stubs==0.0.2a20
 sqlmodel==0.0.6
 typing-extensions==3.10.0.2
 urllib3==1.26.8
