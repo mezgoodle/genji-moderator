@@ -26,5 +26,5 @@ sqlalchemy2-stubs==0.0.2a21
 sqlmodel==0.0.6
 typing-extensions==4.1.1
 urllib3==1.26.9
-wrapt==1.13.3
+wrapt==1.14.0
 yarl==1.7.0
