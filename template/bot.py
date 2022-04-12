@@ -11,6 +11,7 @@ from tgbot.handlers.admins import register_admins
 from tgbot.handlers.help import register_help
 from tgbot.handlers.start import register_start
 from tgbot.handlers.dice import register_dice
+from tgbot.handlers.unmute import register_unmute
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +26,7 @@ def register_all_filters(dp):
 
 def register_all_handlers(dp):
     register_start(dp)
+    register_unmute(dp)
     register_help(dp)
     register_dice(dp)
     register_admins(dp)
