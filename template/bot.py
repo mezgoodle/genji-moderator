@@ -32,11 +32,12 @@ def register_all_handlers(dp):
     register_admins(dp)
 
 
-def create_db():
+def create_db(bot: Bot):
     sqlite_file_name = 'database.db'
     sqlite_url = f'sqlite:///{sqlite_file_name}'
     engine = get_engine(sqlite_url)
     create_database(engine)
+    bot['engine'] = engine
 
 
 async def main():
@@ -57,7 +58,7 @@ async def main():
     register_all_filters(dp)
     register_all_handlers(dp)
 
-    create_db()
+    create_db(bot)
 
     # start
     try:
