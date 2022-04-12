@@ -10,17 +10,17 @@ from tgbot.filters.admin import AdminFilter
 from tgbot.handlers.admin import register_admin
 from tgbot.handlers.echo import register_echo
 from tgbot.handlers.user import register_user
-from tgbot.middlewares.db import DbMiddleware
 
 logger = logging.getLogger(__name__)
 
 
 def register_all_middlewares(dp):
-    dp.setup_middleware(DbMiddleware())
+    pass
 
 
 def register_all_filters(dp):
-    dp.filters_factory.bind(AdminFilter)
+    pass
+    # dp.filters_factory.bind(AdminFilter)
 
 
 def register_all_handlers(dp):
