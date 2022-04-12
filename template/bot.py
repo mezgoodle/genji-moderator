@@ -6,11 +6,11 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from tgbot.services.database import get_engine, create_database
 from tgbot.config import load_config
-from tgbot.filters.admin import AdminFilter
+from tgbot.filters.admin import IsAdminFilter
 from tgbot.handlers.admin import register_admin
-from tgbot.handlers.echo import register_echo
 from tgbot.handlers.help import register_help
 from tgbot.handlers.start import register_start
+from tgbot.handlers.dice import register_dice
 
 logger = logging.getLogger(__name__)
 
@@ -20,15 +20,14 @@ def register_all_middlewares(dp):
 
 
 def register_all_filters(dp):
-    pass
-    # dp.filters_factory.bind(AdminFilter)
+    dp.filters_factory.bind(IsAdminFilter)
 
 
 def register_all_handlers(dp):
     register_start(dp)
     register_help(dp)
+    register_dice(dp)
     register_admin(dp)
-    register_echo(dp)
 
 
 def create_db():
