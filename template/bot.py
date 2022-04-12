@@ -7,7 +7,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from tgbot.services.database import get_engine, create_database
 from tgbot.config import load_config
 from tgbot.filters.admin import IsAdminFilter
-from tgbot.handlers.admin import register_admin
+from tgbot.handlers.admins import register_admins
 from tgbot.handlers.help import register_help
 from tgbot.handlers.start import register_start
 from tgbot.handlers.dice import register_dice
@@ -27,7 +27,7 @@ def register_all_handlers(dp):
     register_start(dp)
     register_help(dp)
     register_dice(dp)
-    register_admin(dp)
+    register_admins(dp)
 
 
 def create_db():
