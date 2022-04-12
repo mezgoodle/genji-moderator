@@ -11,6 +11,6 @@ async def start_command(message: Message) -> Message:
 
 
 def register_start(dp: Dispatcher):
-    dp.register_message_handler(start_command, CommandStart(), state="*")
+    dp.register_message_handler(start_command, CommandStart())
 
 

@@ -15,4 +15,4 @@ async def admins_command(message: Message) -> Message:
 
 
 def register_admins(dp: Dispatcher):
-    dp.register_message_handler(admins_command, commands=['admins'], state="*")
+    dp.register_message_handler(admins_command, commands=['admins'])

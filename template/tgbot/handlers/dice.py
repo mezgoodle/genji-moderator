@@ -10,6 +10,6 @@ async def role_dice(message: Message) -> Message:
 
 
 def register_dice(dp: Dispatcher):
-    dp.register_message_handler(role_dice, commands=['dice'], state="*")
+    dp.register_message_handler(role_dice, commands=['dice'])
 
 

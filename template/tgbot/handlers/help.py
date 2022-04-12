@@ -22,6 +22,6 @@ Administrator's command:
 
 
 def register_help(dp: Dispatcher):
-    dp.register_message_handler(help_command, CommandHelp(), state="*")
+    dp.register_message_handler(help_command, CommandHelp())
 
 
