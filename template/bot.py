@@ -3,8 +3,8 @@ import logging
 
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.contrib.fsm_storage.redis import RedisStorage2
 
+from tgbot.services.database import get_engine, create_database
 from tgbot.config import load_config
 from tgbot.filters.admin import AdminFilter
 from tgbot.handlers.admin import register_admin
@@ -30,6 +30,13 @@ def register_all_handlers(dp):
     register_echo(dp)
 
 
+def create_db():
+    sqlite_file_name = 'database.db'
+    sqlite_url = f'sqlite:///{sqlite_file_name}'
+    engine = get_engine(sqlite_url)
+    create_database(engine)
+
+
 async def main():
     logging.basicConfig(
         level=logging.INFO,
@@ -38,7 +45,7 @@ async def main():
     logger.info("Starting bot")
     config = load_config(".env")
 
-    storage = RedisStorage2() if config.tg_bot.use_redis else MemoryStorage()
+    storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
     dp = Dispatcher(bot, storage=storage)
 
@@ -47,6 +54,8 @@ async def main():
     register_all_middlewares(dp)
     register_all_filters(dp)
     register_all_handlers(dp)
+
+    create_db()
 
     # start
     try:
