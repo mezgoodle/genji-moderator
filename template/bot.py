@@ -11,7 +11,6 @@ from tgbot.handlers.admins import register_admins
 from tgbot.handlers.help import register_help
 from tgbot.handlers.start import register_start
 from tgbot.handlers.dice import register_dice
-from tgbot.handlers.unmute import register_unmute
 from tgbot.handlers.mute import register_mute
 from tgbot.handlers.warn import register_warn
 from tgbot.handlers.kick import register_kick
@@ -32,7 +31,6 @@ def register_all_handlers(dp):
     register_mute(dp)
     register_kick(dp)
     register_warn(dp)
-    register_unmute(dp)
     register_help(dp)
     register_dice(dp)
     register_admins(dp)
