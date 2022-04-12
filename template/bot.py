@@ -14,6 +14,7 @@ from tgbot.handlers.dice import register_dice
 from tgbot.handlers.mute import register_mute
 from tgbot.handlers.warn import register_warn
 from tgbot.handlers.kick import register_kick
+from tgbot.handlers.ban import register_ban
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +30,7 @@ def register_all_filters(dp):
 def register_all_handlers(dp):
     register_start(dp)
     register_mute(dp)
+    register_ban(dp)
     register_kick(dp)
     register_warn(dp)
     register_help(dp)
