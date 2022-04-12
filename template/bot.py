@@ -6,6 +6,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from tgbot.services.database import get_engine, create_database
 from tgbot.config import load_config
+from tgbot.services.setting_commands import set_default_commands
 from tgbot.filters.admin import IsAdminFilter
 from tgbot.handlers.admins import register_admins
 from tgbot.handlers.help import register_help
@@ -15,6 +16,7 @@ from tgbot.handlers.mute import register_mute
 from tgbot.handlers.warn import register_warn
 from tgbot.handlers.kick import register_kick
 from tgbot.handlers.ban import register_ban
+
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +38,10 @@ def register_all_handlers(dp):
     register_help(dp)
     register_dice(dp)
     register_admins(dp)
+
+
+async def set_all_default_commands(bot: Bot):
+    await set_default_commands(bot)
 
 
 def create_db(bot: Bot):
@@ -65,6 +71,8 @@ async def main():
     register_all_handlers(dp)
 
     create_db(bot)
+
+    await set_all_default_commands(bot)
 
     # start
     try:
