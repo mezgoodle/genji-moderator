@@ -2,7 +2,7 @@ from aiogram import Dispatcher
 from aiogram.types import Message, chat_permissions
 
 from datetime import timedelta
-from template.tgbot.misc.seconds import work_with_user
+from tgbot.misc.seconds import work_with_user
 
 
 async def mute_user(message: Message):

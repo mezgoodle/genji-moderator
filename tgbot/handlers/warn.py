@@ -1,8 +1,8 @@
 from aiogram import Dispatcher
 from aiogram.types import Message
 
-from template.tgbot.misc.seconds import work_with_user
-from template.tgbot.misc.checks import check_warns
+from tgbot.misc.seconds import work_with_user
+from tgbot.misc.checks import check_warns
 
 from datetime import timedelta
 

@@ -4,7 +4,7 @@ from typing import Union
 from sqlalchemy import exc
 from sqlmodel import SQLModel, Session, create_engine, select
 
-from template.tgbot.models.models import User
+from tgbot.models.models import User
 
 
 def get_user(engine: create_engine, user_id: str) -> Union[User, None]:

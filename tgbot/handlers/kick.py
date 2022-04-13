@@ -1,7 +1,7 @@
 from aiogram import Dispatcher
 from aiogram.types import Message
 
-from template.tgbot.misc.seconds import work_with_user
+from tgbot.misc.seconds import work_with_user
 
 from datetime import timedelta
 

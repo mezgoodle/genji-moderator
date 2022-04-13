@@ -15,6 +15,6 @@ class Config:
 def load_config(path: str = None) -> Config:
     return Config(
         tg_bot=TgBot(
-            token=os.getenv('BOT_TOKEN', 'bot_token')
+            token=os.getenv('BOT_TOKEN', '5135575762:AAF9vytvlcuL-hruAHHMgZ3G2WvLpbZXMSI')
         ),
     )

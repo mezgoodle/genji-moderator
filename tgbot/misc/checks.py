@@ -1,4 +1,4 @@
-from template.tgbot.services.database import get_user
+from tgbot.services.database import get_user
 
 from typing import Tuple
 

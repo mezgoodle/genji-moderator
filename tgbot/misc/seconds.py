@@ -1,4 +1,4 @@
-from template.tgbot.services.database import get_user, update_user, create_user
+from tgbot.services.database import get_user, update_user, create_user
 
 
 async def work_with_user(user_id: str, field_name: str, engine: object) -> int:
