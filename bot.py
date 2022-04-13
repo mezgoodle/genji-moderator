@@ -1,10 +1,8 @@
-import asyncio
 import logging
 import os
 
 from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.utils.executor import start_webhook
 
 from tgbot.services.database import get_engine, create_database
 from tgbot.config import load_config
@@ -72,12 +70,12 @@ WEBAPP_PORT = int(os.getenv('PORT', 5000))
 
 
 # Functions for webhooks
-async def on_startup(dp):
+async def on_startup(dp: Dispatcher):
     await set_all_default_commands()
     await bot.set_webhook(WEBHOOK_URL)
 
 
-async def on_shutdown(dp):
+async def on_shutdown(dp: Dispatcher):
     await dp.storage.close()
     await dp.storage.wait_closed()
     logging.warning('Shutting down..')
@@ -154,5 +152,3 @@ if __name__ == '__main__':
         host=WEBAPP_HOST,
         port=WEBAPP_PORT
     )
-    # except (KeyboardInterrupt, SystemExit):
-    #     logger.error("Bot stopped!")
