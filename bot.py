@@ -2,8 +2,9 @@ import asyncio
 import logging
 import os
 
-from aiogram import Bot, Dispatcher, executor
+from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.utils.executor import start_webhook
 
 from tgbot.services.database import get_engine, create_database
 from tgbot.config import load_config
@@ -18,7 +19,6 @@ from tgbot.handlers.warn import register_warn
 from tgbot.handlers.kick import register_kick
 from tgbot.handlers.ban import register_ban
 from tgbot.handlers.new_chat_members import register_join
-
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ async def on_startup(bot: Bot, WEBHOOK_URL: str):
     await bot.set_webhook(WEBHOOK_URL)
 
 
-def on_shutdown():
+async def on_shutdown():
     logging.warning('Shutting down..')
     logging.warning('Bye!')
 
@@ -71,7 +71,7 @@ async def main():
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
     )
     logger.info("Starting bot")
-    config = load_config(".env")
+    config = load_config()
 
     storage = MemoryStorage()
     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
@@ -97,14 +97,13 @@ async def main():
     WEBAPP_HOST = '0.0.0.0'
     WEBAPP_PORT = int(os.getenv('PORT', 5000))
 
-    await on_startup(bot, WEBHOOK_URL)
-
     # start
     try:
-        executor.start_webhook(
+        start_webhook(
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
             on_shutdown=on_shutdown,
+            on_startup=on_startup(bot, WEBHOOK_URL),
             skip_updates=True,
             host=WEBAPP_HOST,
             port=WEBAPP_PORT
