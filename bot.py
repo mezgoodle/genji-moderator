@@ -103,7 +103,7 @@ async def main():
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
             on_shutdown=on_shutdown,
-            on_startup=await on_startup(bot, WEBHOOK_URL),
+            on_startup=on_startup(bot, WEBHOOK_URL),
             skip_updates=True,
             host=WEBAPP_HOST,
             port=WEBAPP_PORT
