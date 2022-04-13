@@ -16,6 +16,7 @@ from tgbot.handlers.mute import register_mute
 from tgbot.handlers.warn import register_warn
 from tgbot.handlers.kick import register_kick
 from tgbot.handlers.ban import register_ban
+from tgbot.handlers.new_chat_members import register_join
 
 
 logger = logging.getLogger(__name__)
@@ -38,6 +39,7 @@ def register_all_handlers(dp):
     register_help(dp)
     register_dice(dp)
     register_admins(dp)
+    register_join(dp)
 
 
 async def set_all_default_commands(bot: Bot):
