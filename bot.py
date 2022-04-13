@@ -99,11 +99,11 @@ async def main():
 
     # start
     try:
-        await start_webhook(
+        start_webhook(
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
             on_shutdown=on_shutdown,
-            on_startup=on_startup(bot, WEBHOOK_URL),
+            on_startup=await on_startup(bot, WEBHOOK_URL),
             skip_updates=True,
             host=WEBAPP_HOST,
             port=WEBAPP_PORT
@@ -111,7 +111,6 @@ async def main():
     finally:
         await dp.storage.close()
         await dp.storage.wait_closed()
-        await bot.session.close()
 
 
 if __name__ == '__main__':
