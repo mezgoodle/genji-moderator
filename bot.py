@@ -99,7 +99,7 @@ async def main():
 
     # start
     try:
-        start_webhook(
+        await start_webhook(
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
             on_shutdown=on_shutdown,
