@@ -60,7 +60,7 @@ async def on_startup(bot: Bot, WEBHOOK_URL: str):
     await bot.set_webhook(WEBHOOK_URL)
 
 
-async def on_shutdown():
+def on_shutdown():
     logging.warning('Shutting down..')
     logging.warning('Bye!')
 
@@ -97,12 +97,13 @@ async def main():
     WEBAPP_HOST = '0.0.0.0'
     WEBAPP_PORT = int(os.getenv('PORT', 5000))
 
+    await on_startup(bot, WEBHOOK_URL)
+
     # start
     try:
         executor.start_webhook(
             dispatcher=dp,
             webhook_path=WEBHOOK_PATH,
-            on_startup=on_startup(bot, WEBHOOK_URL),
             on_shutdown=on_shutdown,
             skip_updates=True,
             host=WEBAPP_HOST,
