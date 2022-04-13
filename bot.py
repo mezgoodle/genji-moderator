@@ -1,7 +1,8 @@
 import asyncio
 import logging
+import os
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from tgbot.services.database import get_engine, create_database
@@ -54,6 +55,16 @@ def create_db(bot: Bot):
     bot['engine'] = engine
 
 
+# Functions for webhooks
+async def on_startup(bot: Bot, WEBHOOK_URL: str):
+    await bot.set_webhook(WEBHOOK_URL)
+
+
+async def on_shutdown():
+    logging.warning('Shutting down..')
+    logging.warning('Bye!')
+
+
 async def main():
     logging.basicConfig(
         level=logging.INFO,
@@ -76,9 +87,27 @@ async def main():
 
     await set_all_default_commands(bot)
 
+    # Webhook settings
+    HEROKU_APP_NAME = os.getenv('HEROKU_APP_NAME')
+    WEBHOOK_HOST = f'https://{HEROKU_APP_NAME}.herokuapp.com'
+    WEBHOOK_PATH = f'/webhook/{config.tg_bot.token}'
+    WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
+
+    # Webserver settings
+    WEBAPP_HOST = '0.0.0.0'
+    WEBAPP_PORT = int(os.getenv('PORT', 5000))
+
     # start
     try:
-        await dp.start_polling()
+        executor.start_webhook(
+            dispatcher=dp,
+            webhook_path=WEBHOOK_PATH,
+            on_startup=on_startup(bot, WEBHOOK_URL),
+            on_shutdown=on_shutdown,
+            skip_updates=True,
+            host=WEBAPP_HOST,
+            port=WEBAPP_PORT
+        )
     finally:
         await dp.storage.close()
         await dp.storage.wait_closed()
