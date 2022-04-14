@@ -24,6 +24,7 @@ storage = MemoryStorage()
 bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
 dp = Dispatcher(bot, storage=storage)
 bot['config'] = config
+# TODO: set up filters for chat type - group only
 
 
 def register_all_middlewares(dp):
