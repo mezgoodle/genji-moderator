@@ -1,9 +1,15 @@
-from aiogram import Dispatcher
 from aiogram.types import Message
 from aiogram.dispatcher.filters.builtin import CommandHelp
 
+from loader import dp
 
+import logging
+
+
+@dp.message_handler(CommandHelp())
 async def help_command(message: Message) -> Message:
+    logger = logging.getLogger(__name__)
+    logger.info('Handler executed')
     """
     This handler will be called when user sends `/help` command
     """
@@ -19,9 +25,3 @@ Administrator's command:
     !mute - mute a user
     !unmute, !unban - opposite commands
 """)
-
-
-def register_help(dp: Dispatcher):
-    dp.register_message_handler(help_command, CommandHelp())
-
-

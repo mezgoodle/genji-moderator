@@ -1,15 +1,12 @@
-from aiogram import Dispatcher
 from aiogram.types import Message
 
+from loader import dp
 
+import logging
+
+
+@dp.message_handler(commands=['dice'])
 async def role_dice(message: Message) -> Message:
-    """
-    This handler will be called when user sends `/dice` command
-    """
+    logger = logging.getLogger(__name__)
+    logger.info('Handler executed')
     return await message.answer_dice()
-
-
-def register_dice(dp: Dispatcher):
-    dp.register_message_handler(role_dice, commands=['dice'])
-
-

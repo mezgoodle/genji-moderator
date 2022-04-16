@@ -1,11 +1,16 @@
-from aiogram import Dispatcher
 from aiogram.types import Message, chat_permissions
 
 from datetime import timedelta
+import logging
+
 from tgbot.misc.seconds import work_with_user
+from loader import dp
 
 
+@dp.message_handler(is_admin=True, commands=['mute'], commands_prefix='!/')
 async def mute_user(message: Message):
+    logger = logging.getLogger(__name__)
+    logger.info('Handler executed')
     if not message.reply_to_message:
         return await message.reply('This command need to be as reply on message')
     await message.delete()
@@ -23,7 +28,10 @@ async def mute_user(message: Message):
     return await message.reply_to_message.reply(f'User has been muted for the {seconds} seconds')
 
 
+@dp.message_handler(is_admin=True, commands=['unmute'], commands_prefix='!/')
 async def unmute_user(message: Message):
+    logger = logging.getLogger(__name__)
+    logger.info('Handler executed')
     if not message.reply_to_message:
         return await message.reply('This command need to be as reply on message')
     await message.delete()
@@ -35,8 +43,3 @@ async def unmute_user(message: Message):
                                                                                         can_send_other_messages=True,
                                                                                         can_send_media_messages=True))
     return await message.reply_to_message.reply('User has been unmuted')
-
-
-def register_mute(dp: Dispatcher):
-    dp.register_message_handler(mute_user, is_admin=True, commands=['mute'], commands_prefix='!/')
-    dp.register_message_handler(unmute_user, is_admin=True, commands=['unmute'], commands_prefix='!/')

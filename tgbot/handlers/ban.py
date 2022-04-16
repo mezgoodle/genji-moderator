@@ -1,10 +1,16 @@
-from aiogram import Dispatcher
 from aiogram.types import Message
 
 from datetime import timedelta
 
+from loader import dp
 
+import logging
+
+
+@dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/')
 async def ban_user(message: Message):
+    logger = logging.getLogger(__name__)
+    logger.info('Handler executed')
     if not message.reply_to_message:
         await message.reply('This command need to be as reply on message')
         return
@@ -15,7 +21,10 @@ async def ban_user(message: Message):
     return await message.reply_to_message.reply('User has been banned')
 
 
+@dp.message_handler(is_admin=True, commands=['unban'], commands_prefix='!/')
 async def unban_user(message: Message):
+    logger = logging.getLogger(__name__)
+    logger.info('Handler executed')
     if not message.reply_to_message:
         await message.reply('This command need to be as reply on message')
         return
@@ -25,8 +34,3 @@ async def unban_user(message: Message):
                                         only_if_banned=True)
     username = message.reply_to_message.from_user.username
     return await message.reply_to_message.reply(f'User @{username} has been unbanned')
-
-
-def register_ban(dp: Dispatcher):
-    dp.register_message_handler(ban_user, is_admin=True, commands=['ban'], commands_prefix='!/')
-    dp.register_message_handler(unban_user, is_admin=True, commands=['unban'], commands_prefix='!/')
