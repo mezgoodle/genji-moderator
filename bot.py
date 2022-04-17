@@ -1,7 +1,8 @@
 import logging
 import os
 
-from aiogram import Bot, Dispatcher, executor
+from aiogram import Bot, Dispatcher
+from aiogram.utils.executor import start_webhook, start_polling
 
 from loader import dp
 from tgbot.services.database import get_engine, create_database
@@ -62,7 +63,7 @@ async def on_shutdown(dispatcher: Dispatcher):
 
 if __name__ == '__main__':
     logging.basicConfig(
-        level=logging.INFO,
+        level=logging.DEBUG,
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
     )
     logger.info("Starting bot")
@@ -78,11 +79,18 @@ if __name__ == '__main__':
     WEBAPP_HOST = '0.0.0.0'
     WEBAPP_PORT = int(os.getenv('PORT', 5000))
 
-    executor.start_webhook(
+    # start_polling(
+    #     dispatcher=dp,
+    #     on_startup=on_startup,
+    #     on_shutdown=on_shutdown,
+    #     skip_updates=True,
+    # )
+
+    start_webhook(
         dispatcher=dp,
-        webhook_path=WEBHOOK_PATH,
-        on_shutdown=on_shutdown,
         on_startup=on_startup,
+        on_shutdown=on_shutdown,
+        webhook_path=WEBHOOK_PATH,
         skip_updates=True,
         host=WEBAPP_HOST,
         port=WEBAPP_PORT
