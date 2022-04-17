@@ -53,7 +53,7 @@ async def on_startup(dispatcher: Dispatcher, webhook_url: str = None):
     webhook = await dispatcher.bot.get_webhook_info()
 
     if webhook_url:
-        await dispatcher.bot.set_webhook(WEBHOOK_URL)
+        await dispatcher.bot.set_webhook(webhook_url)
         logger.info('Webhook was set')
     elif webhook.url:
         await dispatcher.bot.delete_webhook()
