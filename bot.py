@@ -1,3 +1,4 @@
+import functools
 import logging
 import os
 
@@ -44,14 +45,22 @@ def create_db(bot: Bot):
     logger.info('Database was created')
 
 
-# Functions for webhooks
-async def on_startup(dispatcher: Dispatcher):
+async def on_startup(dispatcher: Dispatcher, webhook_url: str = None):
     register_all_middlewares(dispatcher)
     register_all_filters(dispatcher)
     register_all_handlers(dispatcher)
     create_db(dispatcher.bot)
     await set_all_default_commands(dispatcher.bot)
-    await dispatcher.bot.set_webhook(WEBHOOK_URL)
+
+    # Get current webhook status
+    webhook = await dispatcher.bot.get_webhook_info()
+
+    if webhook_url:
+        await dispatcher.bot.set_webhook(WEBHOOK_URL)
+        logger.info('Webhook was set')
+    elif webhook.url:
+        await dispatcher.bot.delete_webhook()
+        logger.info('Webhook was deleted')
     logger.info('Bot started')
 
 
@@ -88,7 +97,7 @@ if __name__ == '__main__':
 
     start_webhook(
         dispatcher=dp,
-        on_startup=on_startup,
+        on_startup=functools.partial(on_startup, webhook_url=WEBHOOK_URL),
         on_shutdown=on_shutdown,
         webhook_path=WEBHOOK_PATH,
         skip_updates=True,
