@@ -1,4 +1,4 @@
-from aiogram.types import Message
+from aiogram.types import Message, ChatType
 
 from datetime import timedelta
 
@@ -7,7 +7,8 @@ from loader import dp
 import logging
 
 
-@dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/')
+@dp.message_handler(is_admin=True, commands=['ban'], commands_prefix='!/',
+                    chat_type=[ChatType.GROUP, ChatType.SUPERGROUP])
 async def ban_user(message: Message):
     logger = logging.getLogger(__name__)
     logger.info('Handler executed')

@@ -1,4 +1,4 @@
-from aiogram.types import Message, chat_permissions
+from aiogram.types import Message, chat_permissions, ChatType
 
 from datetime import timedelta
 import logging
@@ -7,7 +7,8 @@ from tgbot.misc.seconds import work_with_user
 from loader import dp
 
 
-@dp.message_handler(is_admin=True, commands=['mute'], commands_prefix='!/')
+@dp.message_handler(is_admin=True, commands=['mute'], commands_prefix='!/',
+                    chat_type=[ChatType.GROUP, ChatType.SUPERGROUP])
 async def mute_user(message: Message):
     logger = logging.getLogger(__name__)
     logger.info('Handler executed')
@@ -28,7 +29,8 @@ async def mute_user(message: Message):
     return await message.reply_to_message.reply(f'User has been muted for the {seconds} seconds')
 
 
-@dp.message_handler(is_admin=True, commands=['unmute'], commands_prefix='!/')
+@dp.message_handler(is_admin=True, commands=['unmute'], commands_prefix='!/',
+                    chat_type=[ChatType.GROUP, ChatType.SUPERGROUP])
 async def unmute_user(message: Message):
     logger = logging.getLogger(__name__)
     logger.info('Handler executed')

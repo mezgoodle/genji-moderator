@@ -14,9 +14,6 @@ from tgbot.filters.admin import IsAdminFilter
 logger = logging.getLogger(__name__)
 
 
-# TODO: set up filters for chat type - group only
-
-
 def register_all_middlewares(dispatcher: Dispatcher):
     logger.info('Registering middlewares')
 
@@ -72,7 +69,7 @@ async def on_shutdown(dispatcher: Dispatcher):
 
 if __name__ == '__main__':
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
     )
     logger.info("Starting bot")

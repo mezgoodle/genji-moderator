@@ -1,11 +1,11 @@
-from aiogram.types import Message
+from aiogram.types import Message, ChatType
 
 from loader import dp
 
 import logging
 
 
-@dp.message_handler(commands=['admins'])
+@dp.message_handler(commands=['admins'], chat_type=[ChatType.GROUP, ChatType.SUPERGROUP])
 async def admins_command(message: Message) -> Message:
     logger = logging.getLogger(__name__)
     logger.info('Handler executed')

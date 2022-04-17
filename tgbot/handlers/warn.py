@@ -1,4 +1,4 @@
-from aiogram.types import Message
+from aiogram.types import Message, ChatType
 
 from tgbot.misc.seconds import work_with_user
 from tgbot.misc.checks import check_warns
@@ -8,7 +8,8 @@ from datetime import timedelta
 import logging
 
 
-@dp.message_handler(is_admin=True, commands=['warn'], commands_prefix='!/')
+@dp.message_handler(is_admin=True, commands=['warn'], commands_prefix='!/',
+                    chat_type=[ChatType.GROUP, ChatType.SUPERGROUP])
 async def warn_user(message: Message):
     logger = logging.getLogger(__name__)
     logger.info('Handler executed')
