@@ -60,54 +60,6 @@ async def on_shutdown(dispatcher: Dispatcher):
     logger.info('Bot shutdown')
 
 
-# async def main():
-#     logging.basicConfig(
-#         level=logging.INFO,
-#         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s',
-#     )
-#     logger.info("Starting bot")
-#     config = load_config()
-#
-#     storage = MemoryStorage()
-#     bot = Bot(token=config.tg_bot.token, parse_mode='HTML')
-#     dp = Dispatcher(bot, storage=storage)
-#
-#     bot['config'] = config
-#
-#     register_all_middlewares(dp)
-#     register_all_filters(dp)
-#     register_all_handlers(dp)
-#
-#     create_db(bot)
-#
-#     await set_all_default_commands(bot)
-#
-#     # Webhook settings
-#     HEROKU_APP_NAME = os.getenv('HEROKU_APP_NAME')
-#     WEBHOOK_HOST = f'https://{HEROKU_APP_NAME}.herokuapp.com'
-#     WEBHOOK_PATH = f'/webhook/{config.tg_bot.token}'
-#     WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
-#
-#     # Webserver settings
-#     WEBAPP_HOST = '0.0.0.0'
-#     WEBAPP_PORT = int(os.getenv('PORT', 5000))
-#
-#     # start
-#     try:
-#         start_webhook(
-#             dispatcher=dp,
-#             webhook_path=WEBHOOK_PATH,
-#             on_shutdown=on_shutdown,
-#             on_startup=on_startup(bot, WEBHOOK_URL),
-#             skip_updates=True,
-#             host=WEBAPP_HOST,
-#             port=WEBAPP_PORT
-#         )
-#     finally:
-#         await dp.storage.close()
-#         await dp.storage.wait_closed()
-
-
 if __name__ == '__main__':
     logging.basicConfig(
         level=logging.INFO,
