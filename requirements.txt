@@ -12,7 +12,7 @@ idna==3.3
 multidict==6.0.2
 pydantic==1.9.0
 pytz==2022.1
-SQLAlchemy==1.4.35
+SQLAlchemy==1.4.36
 sqlalchemy2-stubs==0.0.2a21
 sqlmodel==0.0.6
 typing_extensions==4.1.1
